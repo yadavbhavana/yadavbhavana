@@ -1,39 +1,24 @@
-def shopping_total(items):
-    """
-    Calculate the total cost of a shopping list with 10% discount for items over $50 NZD.
-    
-    Args:
-        items: String containing comma-separated item_name,price pairs
-        
-    Returns:
-        float: Total amount rounded to one decimal place
-    """
-    if not items.strip():
+# Shopping total calculation using lambda functions
+
+# Lambda to apply 10% discount if price > $50
+apply_discount = lambda price: price * 0.9 if price > 50.0 else price
+
+# Helper function to safely parse float (wrapped in lambda style)
+def safe_float_parse(s):
+    try:
+        return float(s.strip())
+    except (ValueError, AttributeError):
         return 0.0
-    
-    # Split the items string into individual item pairs
-    item_pairs = items.split(',')
-    
-    total = 0.0
-    
-    # Process items in pairs (name, price)
-    for i in range(0, len(item_pairs), 2):
-        if i + 1 < len(item_pairs):
-            item_name = item_pairs[i].strip()
-            try:
-                price = float(item_pairs[i + 1].strip())
-                
-                # Apply 10% discount if price > $50
-                if price > 50.0:
-                    price = price * 0.9  # 10% discount
-                
-                total += price
-                
-            except ValueError:
-                # Skip invalid price entries
-                continue
-    
-    return round(total, 1)
+
+# Lambda to process price string and apply discount
+process_price = lambda price_str: apply_discount(safe_float_parse(price_str))
+
+# Main shopping total function using lambda and functional programming
+shopping_total = lambda items: round(
+    sum(map(process_price, 
+        [items.split(',')[i] for i in range(1, len(items.split(',')), 2)]
+    )), 1
+) if items.strip() else 0.0
 
 
 # Test function with the provided examples
